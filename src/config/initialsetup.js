@@ -1,7 +1,7 @@
 "use strict";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import { AppDataSource } from "./configDb.js";
-import User from "../entities/user.entity.js"
+import { User } from "../entities/user.entity.js"
 
 
 async function encryptPassword(password){
@@ -23,15 +23,10 @@ export async function createUser() {
         userRepository.save(userRepository.create({
             email: "admin@prueba.com",
             password: await encryptPassword("admin123"),
-            estado_activo: true,
-            fecha_registro: now,
-
         })),
         userRepository.save(userRepository.create({
             email: "demo1@gmail.com",
             password: await encryptPassword("demo1"),
-            estado_activo: true,
-            fecha_registro: now,
         })),
     ]);
     console.log("* Usuarios creados exitosamente");
