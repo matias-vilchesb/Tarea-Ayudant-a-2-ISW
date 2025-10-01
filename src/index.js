@@ -4,7 +4,7 @@ import morgan from "morgan";
 import { AppDataSource, connectDB } from "./config/configDb.js";
 import { routerApi } from "./routes/index.routes.js";
 import { createUser } from "./config/initialsetup.js";
-
+import { HOST,PORT } from "./config/configEnv.js";
 
 const app = express();
 app.use(express.json());
@@ -22,9 +22,8 @@ connectDB()
 
     // Levanta el servidor Express
     await createUser();
-    const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
-      console.log(`Servidor iniciado en http://localhost:${PORT}`);
+      console.log(`Servidor iniciado en http://${HOST}:${PORT}`);
     });
   })
   .catch((error) => {
