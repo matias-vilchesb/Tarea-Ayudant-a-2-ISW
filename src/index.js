@@ -22,7 +22,7 @@ connectDB()
 
     // Levanta el servidor Express
     await createUser();
-    app.listen(PORT, () => {
+    app.listen(DB_PORT, () => {
       console.log(`Servidor iniciado en http://${HOST}:${DB_PORT}`);
     });
   })
