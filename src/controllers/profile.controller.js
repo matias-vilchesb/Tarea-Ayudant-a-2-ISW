@@ -2,6 +2,7 @@ import { handleSuccess } from "../Handlers/responseHandlers.js";
 import { AppDataSource } from "../config/configDb.js";
 import bcrypt from "bcrypt";
 import { User } from "../entities/user.entity.js";
+import { usuariovalidation } from "../validations/usuario.validation.js";
 
 
 
@@ -10,21 +11,28 @@ export async function updateProfile(req, res) {
     const userRepository = AppDataSource.getRepository(User);
     const userId = req.user.sub;
     const { email, password } = req.body;
+    const { error } = usuariovalidation.validate({ email, password });
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
     const user = await userRepository.findOneBy({ id: userId });
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
+
     if (email) user.email = email;
     if (password) user.password = await bcrypt.hash(password, 10);
+
     await userRepository.save(user);
-    return res
-      .status(200)
-      .json({ message: "Perfil actualizado correctamente" });
+
+    return res.status(200).json({ message: "Perfil actualizado correctamente" });
   } catch (error) {
     return res
       .status(500)
       .json({ message: "Error al actualizar perfil", error: error.message });
-  }}
+  }
+}
 
 export async function deleteProfile(req, res) {
   try {

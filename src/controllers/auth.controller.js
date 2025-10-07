@@ -1,6 +1,7 @@
 import { loginUser } from "../services/auth.service.js";
 import { createUser } from "../services/user.service.js";
 import { handleSuccess, handleErrorClient, handleErrorServer } from "../Handlers/responseHandlers.js";
+import { usuariovalidation } from "../validations/usuario.validation.js";
 
 export async function login(req, res) {
   try {
@@ -9,7 +10,10 @@ export async function login(req, res) {
     if (!email || !password) {
       return handleErrorClient(res, 400, "Email y contraseña son requeridos");
     }
-    
+      const { error } = usuariovalidation.validate({ email, password });
+      if  (error) {
+          return handleErrorClient(res, 400, error.details[0].message);
+      }
     const data = await loginUser(email, password);
     handleSuccess(res, 200, "Login exitoso", data);
   } catch (error) {
@@ -24,7 +28,10 @@ export async function register(req, res) {
     if (!data.email || !data.password) {
       return handleErrorClient(res, 400, "Email y contraseña son requeridos");
     }
-    
+    const { error } = usuariovalidation.validate({ email: data.email, password: data.password });
+    if  (error) {
+        return handleErrorClient(res, 400, error.details[0].message);
+    }
     const newUser = await createUser(data);
     delete newUser.password; // Nunca devolver la contraseña
     handleSuccess(res, 201, "Usuario registrado exitosamente", newUser);
