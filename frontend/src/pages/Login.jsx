@@ -1,14 +1,34 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../services/auth.service.js';
+
 
 const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError ] = useState('');
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log({ email, password });
+        const userData ={ email,password};
+        try {
+        const response = await login(userData);
+        console.log('Respuesta del login:', response);
+        console.log('Token recibido:', response.token);
+        if (response && response.token) {
+            navigate('/home'); 
+        } else {
+             console.error('Fallo en el login:', response.message);
+             alert('Error de credenciales.');
+        }
+    } catch (error) {
+        console.error('Error al obtener el perfil:', error);
+        alert('Error al obtener el perfil.');
+    }
+    
+
     };    return (
         <div className="min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 w-full max-w-md transform transition-all hover:scale-105">

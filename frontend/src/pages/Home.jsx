@@ -1,11 +1,34 @@
 import { useState } from 'react';
+import Cookies from 'js-cookie';
+import axios from '../services/root.service.js';
 
 const Home = () => {
   const [profileData, setProfileData] = useState(null);
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
   const handleGetProfile = async () => {
-    console.log('Obtener perfil');
+    const token = Cookies.get('jwt-auth');
+    console.log('Token retrieved from cookies:', token);
+    if (!token) {
+      alert('No se encontró el token.');
+      return;
+    } 
+    try {
+      const response = await axios.get(`${API_URL}/profile/private`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+      });
+      setProfileData(response.data);
+      alert('Perfil obtenido con éxito.');
+    } catch (error) {
+      console.error('Error al obtener el perfil:', error);
+      alert('Error al obtener el perfil.');
+    }
   };
+  
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 w-full max-w-2xl transform transition-all hover:scale-105">

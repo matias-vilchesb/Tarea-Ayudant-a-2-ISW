@@ -11,7 +11,14 @@ export async function updateProfile(req, res) {
     const userRepository = AppDataSource.getRepository(User);
     const userId = req.user.sub;
     const { email, password } = req.body;
-    const { error } = usuariovalidation.validate({ email, password });
+
+    // Requerir al menos un campo para actualizar
+    if (!email && !password) {
+      return res.status(400).json({ message: "Debe enviar email y/o password para actualizar." });
+    }
+
+    // Validar permitiendo campos opcionales (si tu esquema soporta opciones)
+    const { error } = usuariovalidation.validate({ email, password }, { presence: "optional" });
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
@@ -26,7 +33,7 @@ export async function updateProfile(req, res) {
 
     await userRepository.save(user);
 
-    return res.status(200).json({ message: "Perfil actualizado correctamente" });
+    return res.status(200).json({ message: "Perfil actualizado correctamente", data: { email: user.email, id: user.id } });
   } catch (error) {
     return res
       .status(500)
@@ -36,7 +43,7 @@ export async function updateProfile(req, res) {
 
 export async function deleteProfile(req, res) {
   try {
-        const userRepository = AppDataSource.getRepository(User); 
+    const userRepository = AppDataSource.getRepository(User);
     const userId = req.user.sub;
     const user = await userRepository.findOneBy({ id: userId });
     if (!user) {
@@ -51,22 +58,27 @@ export async function deleteProfile(req, res) {
   }
 }
 
-
-
-
-
-
-    export function getPublicProfile(req, res) {
+export async function getPublicProfile(req, res) {
   handleSuccess(res, 200, "Perfil público obtenido exitosamente", {
     message: "¡Hola! Este es un perfil público. Cualquiera puede verlo.",
   });
 }
 
-export function getPrivateProfile(req, res) {
-  const user = req.user;
-
-  handleSuccess(res, 200, "Perfil privado obtenido exitosamente", {
-    message: `¡Hola, ${user.email}! Este es tu perfil privado. Solo tú puedes verlo.`,
-    userData: user,
-  });
+export async function getPrivateProfile(req, res) {
+  try {
+    const userRepository = AppDataSource.getRepository(User);
+    const userId = req.user.sub;
+    const user = await userRepository.findOneBy({ id: userId });
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    // No devolver la contraseña
+    const { password, ...userSafe } = user;
+    handleSuccess(res, 200, "Perfil privado obtenido exitosamente", {
+      message: `Perfil privado obtenido`,
+      userData: userSafe,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Error al obtener perfil privado", error: error.message });
+  }
 }

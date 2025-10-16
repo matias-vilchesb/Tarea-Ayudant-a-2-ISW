@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { findUserByEmail } from "./user.service.js";
 
+
 export async function loginUser(email, password) {
   const user = await findUserByEmail(email);
   if (!user) {
