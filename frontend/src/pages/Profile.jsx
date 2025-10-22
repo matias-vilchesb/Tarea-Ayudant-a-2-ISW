@@ -19,7 +19,7 @@ export default function Profile() {
     <div>
       <h2>Perfil</h2>
       <p>Email: {profile.email}</p>
-      {/* Agrega más campos si los tienes */}
+      {}
     </div>
   );
 }
