@@ -36,9 +36,13 @@ connectDB()
 
     // Levanta el servidor Express
     await createUser();
-    app.listen(DB_PORT, () => {
-      console.log(`Servidor iniciado en http://${HOST}:${DB_PORT}/api`);
-    });
+    //app.listen(DB_PORT, () => {
+      //console.log(`Servidor iniciado en http://${HOST}:${DB_PORT}/api`);
+    //});
+    app.listen(DB_PORT, '0.0.0.0', () => { 
+    console.log(`Servidor iniciado en http://0.0.0.0:${DB_PORT}/api`);
+});
+
   })
   .catch((error) => {
     console.log("Error al conectar con la base de datos:", error);
