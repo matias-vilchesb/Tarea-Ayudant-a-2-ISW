@@ -9,7 +9,7 @@ import cors from "cors";
 
 const app = express();
 const corsOptions = {
-  origin: 'http://localhost:5173', 
+  origin: 'http://localhost:5173'|| 'http://146.83.198.35:1366/',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], 
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'], 
