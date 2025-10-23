@@ -8,8 +8,13 @@ import { HOST, DB_PORT } from "./config/configEnv.js";
 import cors from "cors";
 
 const app = express();
+
+const VARIABLESORIGIN = [
+    'http://localhost:5173', 
+    'http://146.83.198.35:1366', 
+];
 const corsOptions = {
-  origin: 'http://localhost:5173'|| 'http://146.83.198.35:1366',
+  origin: VARIABLESORIGIN,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], 
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'], 
